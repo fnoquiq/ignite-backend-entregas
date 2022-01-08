@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { AuthenticateDeliverymanController } from './modules/account/authenticateDeliveryman/AuthenticateDeliverymanController'
 import { AuthenticateClientController } from './modules/account/authenticateUser/AuthenticateClientController'
 import { CreateClientController } from './modules/clients/useCases/createClient/CreateClientController'
+import { FindAllDeliveriesController } from './modules/clients/useCases/deliveries/FindAllDeliveriesController'
 import { CreateDeliveryController } from './modules/deliveries/createDelivery/CreateDeliveryController'
 import { FindAllAvailableController } from './modules/deliveries/findAllAvailable/findAllAvailableUseCase'
 import { UpdateDeliverymanController } from './modules/deliveries/updateDeliveryman/useCases/UpdateDeliverymanController'
@@ -18,17 +19,19 @@ const createDeliverymanController = new CreateDeliverymanController()
 const createDeliveryController = new CreateDeliveryController()
 const findAllAvailableController = new FindAllAvailableController()
 const updateDeliverymanController = new UpdateDeliverymanController()
+const findAllDeliveriesController = new FindAllDeliveriesController()
 
 routes.post('/client/', createClientController.handle)
 routes.post('/client/authenticate/', authenticateClientController.handle)
+routes.get('/client/deliveries/', ensureAuthenticateClient, findAllDeliveriesController.handle)
 
 routes.post('/deliveryman/', createDeliverymanController.handle)
 routes.post('/deliveryman/authenticate/', authenticateDeliverymanController.handle)
 
 routes.post('/delivery/', ensureAuthenticateClient, createDeliveryController.handle)
 
-routes.post('/delivery/available' , ensureAuthenticateDeliveryman, findAllAvailableController.handle)
+routes.get('/delivery/available' , ensureAuthenticateDeliveryman, findAllAvailableController.handle)
 
-routes.post('/delivery/updateDeliveryman/:id' , ensureAuthenticateDeliveryman, updateDeliverymanController.handle)
+routes.put('/delivery/updateDeliveryman/:id' , ensureAuthenticateDeliveryman, updateDeliverymanController.handle)
 
 export { routes }
